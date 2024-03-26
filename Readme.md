@@ -13,33 +13,35 @@ with automatic formating and a [python style importing syntax](#new-import-synta
 This garbage collector will be optional for functions and variables with a syntax like
 
 > Variables:
-> @heimdall int var
-> @gc int var  
+> @heimdall int var;
+> @gc int var;  
 
-> Functions
-> @heimdall int main()
-> @gc int main() 
+> Functions:
+> @heimdall int main();
+> @gc int main(); 
 
 ### Dynamic Strings
 
 The dynamic strings will support not only concatenation, but also multiple formats.
 The syntax for a char will be replaced with the normal string, the normal string with the auto
-formating with variables. the \`\` characters will be used for raw strings, which can 
+formating with variables. the \`string\` characters will be used for raw strings, which can 
 have all kinds of values. In format strings to display a { or } you need to escape this.
 It also introduces the print function which optionally adds a `pre` and a `post`
 (which defaults to newline) to the printed output but does not format it.
+There is the new `str` keyword added as well for dynamic strings, alongside char
+arrays for more constant and less requirering strings.
 
-> int var1 = 4
-> printf("var1: {var1})"
-> >> var1: 4
+> int var1 = 4; 
+> printf("var1: {var1})";
+ var1: 4
 
-> int var1 = 4
-> printf('var1: \{var1\})" or printf('var1: {var1}')
-> >> var1: {var1}
+> int var1 = 4;
+> printf('var1: \{var1\})" or printf('var1: {var1}');
+var1: {var1}
 
-> str var1 = `\//ehlo`
-> printf(var1)
-> >> \//ehlo
+> str var1 = \`\//ehlo\`;
+> printf(var1);
+\//ehlo
 
 ###  New import syntax
 
