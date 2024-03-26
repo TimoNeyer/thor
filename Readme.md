@@ -34,16 +34,19 @@ arrays for more constant and less requirering strings.
 > int var1 = 4; 
 >
 > printf("var1: {var1})";
+
  var1: 4
 
 > int var1 = 4;
 >
 > printf('var1: \{var1\})" or printf('var1: {var1}');
+
 var1: {var1}
 
 > str var1 = \`\//ehlo\`;
 >
 > printf(var1);
+
 \//ehlo
 
 ###  New import syntax
