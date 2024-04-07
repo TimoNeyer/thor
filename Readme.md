@@ -13,12 +13,21 @@ with automatic formating and a [python style importing syntax](#new-import-synta
 This garbage collector will be optional for functions and variables with a syntax like
 
 > Variables:
+>
 > @heimdall int var;
+>
 > @gc int var;  
 
 > Functions:
+>
 > @heimdall int main();
+>
 > @gc int main(); 
+
+Alongside that there will be the keyword `yield` which will be similar to the return statement,
+but with the key difference that the returned object will be allocated in memory and returned 
+by value. Implies @gc for the variable
+
 
 ### Dynamic Strings
 

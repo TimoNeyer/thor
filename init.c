@@ -38,7 +38,8 @@ const extern char * keywords[36] = {
     "while",
 
     "str",
-    "import"
+    "import",
+    "yield"
 };
 
 const extern int num_attributes = 2;
