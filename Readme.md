@@ -63,3 +63,12 @@ var1: {var1}
 To import other Thor files, it is possible to use the keywords import, from and as.
 
 > from module.file import function as name
+
+### new to define variables and classes
+
+> new int x;
+>
+> x = 3;
+>
+> new class Type{}
+>   

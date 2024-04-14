@@ -11,4 +11,5 @@ features:
     - strong typing
     - accept c libraries
     - transpiler pipes to gcc with optimization
+    - 'new' keyword for initialization
 
