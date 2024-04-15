@@ -2,27 +2,28 @@
 
 ## Summary:
 
-The Thor programming language is aimed to be a simplified version of c with the same
-syntax. Therefore is has the same type of usecases, but it introduces some other ideas
-like: [Garbage collector](#garbage-collector-heimdall), [dynamic strings](#dynamic-strings)
-with automatic formating and a [python style importing syntax](#new-import-syntax) alongside the c style one
-
+The thor programming language will be aimed to bridge the gap between user friednliness
+of languages like python and the versatility of C and an easy to parse Syntax, as this
+will be my first programming language
 
 ### Garbage collector Heimdall
 
 This garbage collector will be optional for functions and variables with a syntax like
 
-> Variables:
->
-> @heimdall int var;
->
-> @gc int var;  
+ Variables:
+~~~
+ new @heimdall int var;
 
-> Functions:
->
-> @heimdall int main();
->
-> @gc int main(); 
+ new @gc int var;  
+~~~
+
+ Functions:
+
+~~~
+ new @heimdall int main();
+
+ new @gc int main(); 
+ ~~~
 
 Alongside that there will be the keyword `yield` which will be similar to the return statement,
 but with the key difference that the returned object will be allocated in memory and returned 
@@ -40,35 +41,109 @@ It also introduces the print function which optionally adds a `pre` and a `post`
 There is the new `str` keyword added as well for dynamic strings, alongside char
 arrays for more constant and less requirering strings.
 
-> int var1 = 4; 
->
-> printf("var1: {var1})";
+~~~
+...
 
- var1: 4
+new int var1 = 4; 
 
-> int var1 = 4;
->
-> printf('var1: \{var1\})" or printf('var1: {var1}');
+printf("var1: {var1})";
 
-var1: {var1}
+# >> var1: 4
 
-> str var1 = \`\//ehlo\`;
->
-> printf(var1);
+new int var1 = 4;
+
+printf("var1: \{var1\}"); 
+printf('var1: {var1}');
+
+# > var1: {var1}
+# > var1: {var1} 
+
+new str var1 = `\//ehlo\`;
+
+printf(var1);
 
 \//ehlo
+~~~
 
 ###  New import syntax
 
 To import other Thor files, it is possible to use the keywords import, from and as.
 
-> from module.file import function as name
+``` from module[.file] import function as name```
 
-### new to define variables and classes
+It is possible to use `import [library (other thor file or c library)] as None.
 
-> new int x;
->
-> x = 3;
->
-> new class Type{}
->   
+This leads to importing without the need to prepend any module name. Otherwise it 
+is necessary to use `:` to mark the use of a module.
+
+```
+import stdlib as None;
+
+import stdio 
+
+new int random = rand()
+
+stdio:print("something");
+
+```
+
+### `new` to define variables and classes
+
+```
+ new int x;
+
+ x = 3;
+
+ new class Type{}
+ ```
+   
+
+### when executing, specify entrypoint, if not `main` is used
+
+` thor run -e [function_name] [directory/file]`
+
+or simply ` thor run .` to compile a project in the current folder with the entrypoint 
+called `main`
+
+## example:
+```
+ #!/bin/thor run -e entrypoint . 
+
+import stdio as None;
+
+ new int function(arg:str){
+   
+       new int a = 9;
+ 
+       print("a = {a}");
+
+       print("arg = {arg}");
+
+   }
+
+   new int entrypoint(){
+       function("ehlo");
+   }
+```
+
+Compiled with `thor run -e entrypoint test.th` or `thor run -e entrypoint .` if 
+it is the only thor file in the current directory
+
+
+
+## More advanced example
+```
+   import stdio as std
+
+   new class MyClass{
+       
+    new void __init__(cls){
+           new int cls.default = 1;
+           std:print("default value is {cls.default}");
+       }
+
+       new void classmethod(cls){
+           std:nop()
+       }
+   }
+   ```
