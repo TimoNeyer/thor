@@ -32,7 +32,7 @@ typedef struct {
 
 char peek(const FILE * stream){
     char c = getc(stream);
-    return c == EOF ? EOF : ungetc(c, stream);
+    return c == EOF ? '\0' : ungetc(c, stream);
 }
 
 char get(const FILE * stream, int n){

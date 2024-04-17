@@ -6,7 +6,6 @@
 
 #include "hashmap.h"
 #include "dynstring.h"
-
 typedef enum {
     INT,
     FLT,
@@ -96,7 +95,7 @@ void list_push(List * source, ListItem * item, short int freeitem){
 ListItem * list_pop(List * source, short int safe) {
     if (safe){
         void * item = source->content[source->used];
-        source->content[source->used--] = NULL;
+        source->content[source->used--] = calloc(1, source->sizeel);
         return item;
     }
     return source->content[source->used--];

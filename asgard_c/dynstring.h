@@ -1,7 +1,12 @@
 #pragma once
 #define DYNSTRING_H
 
-struct str;
+typedef struct {
+    int size;
+    int used;
+    char * content
+}str;
+
 str * get_new_string(char * string);
 str * get_new_string(char * string);
 void str_free(str * string);

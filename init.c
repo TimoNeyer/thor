@@ -2,7 +2,6 @@
 
 const extern int num_keywords = 36;
 const extern char * keywords[36] = {
-    "auto",
     "break",
     "case",
     "char",
@@ -13,16 +12,11 @@ const extern char * keywords[36] = {
     "double",
     "else",
     "enum",
-    "extern",
     "float",
     "for",
-    "goto",
     "if",
-    "inline",
     "int",
     "long",
-    "register",
-    "restrict",
     "return",
     "short",
     "signed",
@@ -34,12 +28,12 @@ const extern char * keywords[36] = {
     "union",
     "unsigned",
     "void",
-    "volatile",
     "while",
 
     "str",
     "import",
-    "yield"
+    "yield",
+    "new"
 };
 
 const extern int num_attributes = 2;

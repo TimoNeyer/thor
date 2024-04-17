@@ -147,3 +147,12 @@ it is the only thor file in the current directory
        }
    }
    ```
+
+
+## tmp
+
+```
+import<<stdio>>std;
+var:@gc:str:a='ehlo welt'
+
+fn:@gc:str:main(int:a,int:b)

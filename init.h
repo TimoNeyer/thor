@@ -1,4 +1,4 @@
-#ifndef INIT_H
+#pragma once
 #define INIT_H
 
 const extern int num_keywords;
@@ -9,5 +9,3 @@ const extern int num_operators;
 const extern char * operators[35];
 const extern int num_punctuators;
 const extern char * punctuators[16];
-
-#endif 

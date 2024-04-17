@@ -8,11 +8,6 @@
 
 str * get_new_string(char * string);
 
-typedef struct {
-    int size;
-    int used;
-    char * content
-}str;
 
 str* get_new_string(char * string){
     str* new;
@@ -63,7 +58,7 @@ str ** str_split(str * base, char * delim){
         if (base->content[i] == delim){
             
         } else {
-            append_char(current, base->content[i]);
+            //append_char(current, base->content[i]);
         }
 
     }
