@@ -135,7 +135,7 @@ it is the only thor file in the current directory
 ```
    import stdio as std
 
-   new class MyClass{
+   new <class> MyClass{
        
     new void __init__(cls){
            new int cls.default = 1;
@@ -147,12 +147,3 @@ it is the only thor file in the current directory
        }
    }
    ```
-
-
-## tmp
-
-```
-import<<stdio>>std;
-var:@gc:str:a='ehlo welt'
-
-fn:@gc:str:main(int:a,int:b)
