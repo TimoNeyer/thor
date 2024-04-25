@@ -1,4 +1,5 @@
 #include "init.hpp"
+/*
 class keywords {
     std::vector <std::string> keywords = {
         "break",
@@ -75,11 +76,11 @@ class attributes{
 
 
 class comments{
-    std::vector <std::string> comments = {"/*", "# "};
+    std::vector <std::string> comments = {"", "# "};
     public:
         std::string getOpen(std::string chr){
             if (chr == comments.at(0)){
-                return "*/";
+                return "";
             }
             else if (chr == comments.at(1)) {
                 return "\n";
@@ -130,76 +131,76 @@ class operators {
         "**",   // square
         "//"    // divide with rest
     };
-    public:
-        std::vector <std::string> getAfter(char current){
-            std::vector <std::string> res;
-            switch (current) {
-            case '+':
-                res.push_back("+");
-                res.push_back("=");
-                res.push_back("");
-                return res;
-            case '-':
-                res.push_back("-");
-                res.push_back("=");
-                res.push_back("");
-                return res;
-            case '=':
-                res.push_back("=");
-                res.push_back("");
-                return res;
-            case '>':
-                res.push_back("=");
-                res.push_back(">");
-                res.push_back(">=");
-                res.push_back("");
-                return res;
-            case '<':
-                res.push_back("=");
-                res.push_back("<");
-                res.push_back("<=");
-                res.push_back("");
-                return res;
-            case '*':
-                res.push_back("=");
-                res.push_back("*");
-                res.push_back("");
-                return res;
-            case '/':
-                res.push_back("=");
-                res.push_back("/");
-                res.push_back("");
-                return res;
-            case '!':
-                res.push_back("=");
-                res.push_back("");
-                return res;
-            case '%':
-                res.push_back("=");
-                res.push_back("");
-                return res;
-            case '^':
-                res.push_back("=");
-                res.push_back("");
-                return res;
-            case '&':
-                res.push_back("&");
-                res.push_back("=");
-                return res;
-            case '|':
-                res.push_back("|");
-                res.push_back("=");
-                return res;
-            case '.':
-                res.push_back("");
-                return res;
-            default:
-                perror("failed to get follow up char");
-            }
+*/
+    std::vector <std::string> getAfter(char current){
+        std::vector <std::string> res;
+        switch (current) {
+        case '+':
+            res.push_back("+");
+            res.push_back("=");
+            res.push_back("");
+            return res;
+        case '-':
+            res.push_back("-");
+            res.push_back("=");
+            res.push_back("");
+            return res;
+        case '=':
+            res.push_back("=");
+            res.push_back("");
+            return res;
+        case '>':
+            res.push_back("=");
+            res.push_back(">");
+            res.push_back(">=");
+            res.push_back("");
+            return res;
+        case '<':
+            res.push_back("=");
+            res.push_back("<");
+            res.push_back("<=");
+            res.push_back("");
+            return res;
+        case '*':
+            res.push_back("=");
+            res.push_back("*");
+            res.push_back("");
+            return res;
+        case '/':
+            res.push_back("=");
+            res.push_back("/");
+            res.push_back("");
+            return res;
+        case '!':
+            res.push_back("=");
+            res.push_back("");
+            return res;
+        case '%':
+            res.push_back("=");
+            res.push_back("");
+            return res;
+        case '^':
+            res.push_back("=");
+            res.push_back("");
+            return res;
+        case '&':
+            res.push_back("&");
+            res.push_back("=");
+            return res;
+        case '|':
+            res.push_back("|");
+            res.push_back("=");
+            return res;
+        case '.':
+            res.push_back("");
+            return res;
+        default:
+            perror("failed to get follow up char");
         }
-};
+    }
 
- int num_punctuators = 28;
+/*
+int num_punctuators = 28;
 int ipunctuators[] = {32,48,58,65,91,97,123,126};
 char punctuators[] = {
     ',',
@@ -242,3 +243,4 @@ char line_delim[3] = {
     '{',
     '}'
 };
+*/

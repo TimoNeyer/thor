@@ -48,21 +48,21 @@ new int var1 = 4;
 
 printf("var1: {var1})";
 
-# >> var1: 4
+$ >> var1: 4
 
 new int var1 = 4;
 
 printf("var1: \{var1\}"); 
 printf('var1: {var1}');
 
-# > var1: {var1}
-# > var1: {var1} 
+$ > var1: {var1}
+$ > var1: {var1} 
 
 new str var1 = `\//ehlo\`;
 
 printf(var1);
 
-\//ehlo
+$ \//ehlo
 ~~~
 
 ###  New import syntax

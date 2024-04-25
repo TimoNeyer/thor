@@ -50,7 +50,7 @@ const std::string attributes[] = {
     "signed",
 };
 
-const std::string comments[] = {"/*", "# "};
+const std::string comments[] = {"", "# "};
 
 const int num_operatores = 35;
 const std::string operators[] = {
