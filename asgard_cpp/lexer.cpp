@@ -1,6 +1,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 #include <stdlib.h>
 
@@ -9,7 +10,7 @@
 Token::Token(){
     this->line = -1;
     this->column = -1;
-    this->type = IEOF;
+    this->type = EMPTY;
     this->value = std::string("");
 }
 
@@ -24,6 +25,7 @@ Token::Token(int vl, TokenType type, int ln, int clmn){
     this->line = ln;
     this->column = clmn;
     this->type = type;
+    this->value = std::to_string(vl);
 }
 
 Token::Token(double vl, TokenType type, int ln, int clmn){
@@ -41,72 +43,80 @@ Token::Token(char vl, TokenType type, int ln, int clmn){
 }
 
 TokenArray::TokenArray(int minsize){
-    this->container.resize(minsize);
+    this->values.resize(minsize);
 };
 
 TokenArray::TokenArray(){
-    this->container.resize(CONTAINERBUFF);
+    this->values.resize(CONTAINERBUFF);
 }
 
-void TokenArray::push(Token token){
-    if (container.capacity() == container.size()) container.resize(container.size() * 2);
-    container.push_back(token);
+bool TokenArray::push(Token token){
+    if (values.capacity() == values.size()){
+        values.resize(values.size() * 2);
+    }
+    values.push_back(token);
+    return true;
 }
 
-TokenArray::~TokenArray(){
-    delete &container;
-}
-
-void Parser::parseNum(){
+void Lexer::parseNum(char value){
     double flt = 0;
-    int iint = 0;
-    bool isFl = false;
+    int iint = atoi(&value);
+    int isFl = 0;
+    if (stream.peek() == '0') {
+        std::cout << "Number starting with 0 detected at line " << line;
+        perror("ValueError");
+    }
     while (stream.peek() != EOF){
-        column++;
         switch (stream.peek()){
             case '\r':
             case '\v':
             case '\t':
             case '\n':
             case ' ' :
+                stream.get();
                 continue;
             default:
             if (stream.peek() >= '0' && stream.peek() <= '9'){
                 char current = stream.get();
                 if (isFl){
-                    flt = flt + atof(&current) * 0.1;
+                    flt = flt + atoi(&current) * std::pow(0.1, isFl++);
+                    break;
+                } else {
+                    iint = iint * 10 + atoi(&current);
+                    column++;
                     continue;
                 }
-                iint = iint * 10 + current;
-                continue;
-            }
-            if (stream.peek() == '.'){
+            } else if (stream.peek() == '.'){
                 if (isFl) {
-                    std::cout << "more than one decimal point at line";
-                    throw;
+                    std::cout << "error in line " << line;
+                    perror("more than one decimal point");
                 }
                 isFl = true;
                 flt = iint;
+                stream.get();
+                column++;
                 continue;
             }
             else {
-                break;
+                goto exitNum;
             }
         }
     }
+    exitNum:
     isFl ? container.push(Token(flt, FLOAT, line, column)):
     container.push(Token(iint, NUMBER, line, column));
+    return;
+}
 
-};
-
-bool Parser::stdcheck(char next){
+bool Lexer::stdcheck(char next){
     return next >= 'a' && next <= 'z' || 
            next >= 'A' && next <= 'Z' ||
            next == '_'; 
 }
 
-void Parser::parseIdent(){
+void Lexer::parseIdent(char value){
     std::string name;
+    name.push_back(value);
     while (stdcheck(stream.peek())) {
         column++;
         name.push_back(stream.get());
@@ -114,35 +124,34 @@ void Parser::parseIdent(){
     container.push(Token(name, IDENTIFIER, line, column));
 }
 
-char Parser::get_next(std::streampos return_addr){
-    char current;
+char Lexer::get_next(){
+    char current = stream.peek();
     while ( stream.peek() == ' '  || 
             stream.peek() == '\n' || 
-            stream.peek() == '\r' ||
-            stream.peek() == '\t' ||
-            stream.peek() == '\v') {
+            stream.peek() == '\t') {
+        if (stream.peek() == '\n') line++;
         current = stream.get();
+        column++;
     }
-    stream.seekg(return_addr);
     return current;
 } 
 
-void Parser::isComment(std::string current){
+bool Lexer::isComment(std::string current){
     if (current == "/*"){
         while (stream.peek() != EOF){
             if (stream.peek() == '*'){
                 stream.get();
-                if (stream.peek() == '/') return;
+                if (stream.peek() == '/') return true;
             }
             stream.get();
         }
     }
     else if (current == "#"){
         while (stream.peek() != '\n') stream.get();
-    } return;
+    } return true;
 }
 
-char Parser::getClose(char start){
+char Lexer::getClose(char start){
     switch (start){
     case '(':
         return ')';
@@ -156,83 +165,118 @@ char Parser::getClose(char start){
     }
 }
 
-Parser::Parser(std::ifstream file){
-    this->stream.swap(file);
-    this->line = 0;
-    this->column = 0;
-};
-
-void Parser::parse(){
-    while (stream.peek() != EOF){
-        std::streampos retaddr = stream.tellg();
-        char value = stream.get();
-        char next = get_next(retaddr);
-        switch (value) {
-            case '\r':
-            case '\v':
-            case '\t':
-            case '\n':
-            case ' ':
-                continue;
-                break;
-            case '(':
-                container.push(Token('(', LEFT_PAREN, line, column));
-                break;
-            case ')':
-                container.push(Token(')', RIGHT_PAREN, line, column));
-                break;
-            case '{':
-                container.push(Token('{', LEFT_BRACE, line, column));
-                break;
-            case '}':
-                container.push(Token('}', LEFT_PAREN, line, column));
-                break;
-            case '<':
-                next == '=' ? container.push(Token("<=", GREATER_EQ, line, column)) :
-                container.push(Token('<', GREATER, line, column));
-                break;
-            case '>':
-                next == '=' ? container.push(Token(">=", GREATER_EQ, line, column)) :
-                    container.push(Token('>', LESS, line, column));
-                break;
-            case ',':
-                container.push(Token(',', COMMA, line, column));
-                break;
-            case '-':
-                next == '>' ? container.push(Token("->", ARROW, line, column)) : 
-                    container.push(Token('-', MINUS, line, column)); 
-                break;
-            case '+':
-                next == '=' ? container.push(Token("+=", PLUS_EQ, line, column)) : 
-                    next == '+' ? container.push(Token("++", DOUBLE_PLUS, line, column)) :
-                    container.push(Token('+', PLUS, line, column));
-                break;
-            case ';':
-                container.push(Token(';', SEMICOLON, line, column));
-                break;
-            case '/':
-                next == '/' ? container.push(Token("//", DOUBLE_SLASH, line, column)) :
-                    next == '*' ? isComment("/*") : 
-                    container.push(Token('/', SLASH, line, column)) ; 
-                break;
-            case '*':
-                next == '=' ? container.push(Token("*=", STAR_EQ, line, column)): 
-                    next == '*' ? container.push(Token("**", DOUBLE_STAR, line, column)) : 
-                    container.push(Token('*', STAR, line, column));
-                break;
-            case '#':
-                isComment("#");
-                break;
-            default:
-                if (value >= '0' && value <= '9') parseNum();
-                if (value >= 'a' && value <= 'z' || 
-                    value >= 'A' && value <= 'Z' ||
-                    value == '_' ) parseIdent();
+void Lexer::parseString(char start){
+    std::string value;
+    while (stream.peek() != EOF) {
+        if (stream.peek() == start){
+            stream.get();
+            switch (start) {
+                case '`':
+                    container.push(Token(value, RSTRING , line, column));
+                    return;
+                case '"':
+                    container.push(Token(value, FSTRING , line, column));
+                    return;
+                default:
+                    container.push(Token(value, NSTRING , line, column));
+                    return;
+            }
         }
+        value.push_back(stream.get());
     }
 }
 
+Lexer::Lexer(std::ifstream *file){
+    this->stream.swap(*file);
+    this->line = 0;
+    this->column = 0;
+}
+
+void Lexer::parse(){
+    while (stream.peek() != EOF){
+        char value = stream.get();
+        char next = get_next();
+        std::cout << value << next << '\n';
+        switch (value) {
+            //case '\r':
+            //case '\v':
+            case '\t':
+            case '\n':
+            case ' ':
+                break;
+            case '(':
+                container.push(Token("(", LEFT_PAREN, line, column));
+                break;
+            case ')':
+                container.push(Token(")", RIGHT_PAREN, line, column));
+                break;
+            case '{':
+                container.push(Token("{", LEFT_BRACE, line, column));
+                break;
+            case '}':
+                container.push(Token("}", RIGHT_BRACE, line, column));
+                break;
+            case '<':
+                next == '=' ? container.push(Token("<=", GREATER_EQ, line, column)) || stream.get() :
+                container.push(Token("<", GREATER, line, column)); 
+                break;
+            case '>':
+                next == '=' ? container.push(Token(">=", GREATER_EQ, line, column)) || stream.get():
+                    container.push(Token(">", LESS, line, column));
+                break;
+            case ',':
+                container.push(Token(",", COMMA, line, column));
+                break;
+            case '-':
+                next == '>' ? container.push(Token("->", ARROW, line, column)) || stream.get() : 
+                    next == '=' ? container.push(Token("-=", MINUS_EQ, line, column)) || stream.get() :
+                    next == '-' ? container.push(Token("--", DOUBLE_MINUS, line, column)) || stream.get() :
+                    container.push(Token("-", MINUS, line, column)); 
+                break;
+            case '+':
+                next == '=' ? container.push(Token("+=", PLUS_EQ, line, column)) || stream.get(): 
+                    next == '+' ? container.push(Token("++", DOUBLE_PLUS, line, column)) || stream.get():
+                    container.push(Token("+", PLUS, line, column));
+                break;
+            case ';':
+                container.push(Token(";", SEMICOLON, line, column));
+                break;
+            case '/':
+                next == '*' ? isComment("/*") : 
+                next == '/' ? container.push(Token("//", DOUBLE_SLASH, line, column)) || stream.get() :
+                container.push(Token("/", SLASH, line, column)) ; 
+                break;
+            case '*':
+                next == '=' ? container.push(Token("*=", STAR_EQ, line, column)) || stream.get() : 
+                    next == '*' ? container.push(Token("**", DOUBLE_STAR, line, column)) || stream.get(): 
+                    container.push(Token("*", STAR, line, column));
+                break;
+            case '=':
+                next == '=' ? container.push(Token("==", EQUAL_EQ, line, column)) || stream.get() : 
+                    container.push(Token("=", EQUAL, line, column));
+            case '#':
+                container.push(Token("#", HASHTAG, line, column));
+                break;
+            case '.':
+                next == '.' ? container.push(Token("..", DOUBLE_DOT, line, column)) || stream.get() :
+                    container.push(Token(".", DOT, line, column));
+                break;
+            case ':':
+                next == '=' ? container.push(Token(":=", ASSIGN, line, column)) :
+                    next == ':' ? container.push(Token("::", DOUBLE_COLON, line, column)) :
+                    container.push(Token(":", COLON, line, column));
+            default:
+                if (value >= '0' && value <= '9') parseNum(value);
+                if (value == '`' || value == '"' || value == '\'') parseString(value);
+                if (value >= 'a' && value <= 'z' || 
+                    value >= 'A' && value <= 'Z' ||
+                    value == '_' ) parseIdent(value);
+        }
+    }
+}
+/*
 Parser::~Parser(){
     delete[] &container;
     stream.close();
 }
+*/
