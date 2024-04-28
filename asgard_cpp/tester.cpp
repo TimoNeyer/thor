@@ -12,10 +12,11 @@ int main(int argc, char * argv[]){
     Lexer parser(&file);
     parser.parse();
     //return 1;
-    for (int i = 0; i < parser.container.values.size(); i++){
+    for (unsigned long int i = 0; i < parser.container.values.size(); i++){
         if (parser.container.values.at(i).type == EMPTY) continue; 
         std::cout << "Token " << parser.container.values.at(i).value;
         std::cout << " is Type " << parser.container.values.at(i).type;
         std::cout << "\n";
     }
+    return 0;
 }

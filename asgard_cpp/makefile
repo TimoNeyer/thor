@@ -1,2 +1,4 @@
-files=init.cpp helper.cpp
+files= lexer.cpp
 
+main:
+	clang++ lexer.cpp

@@ -54,4 +54,6 @@ Mkfile.old
 dkms.conf
 
 # own ignores
-
+test/
+obj/
+.vscode/
