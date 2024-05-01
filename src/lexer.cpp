@@ -50,6 +50,14 @@ TokenArray::TokenArray(){
     this->values.resize(CONTAINERBUFF);
 }
 
+TokenArray::TokenArray(TokenArray && other){
+    values.swap(other.values);
+}
+
+TokenArray::TokenArray(TokenArray & other){
+    values.swap(other.values);
+}
+
 bool TokenArray::push(Token token){
     if (values.capacity() == values.size()){
         values.resize(values.size() * 2);
@@ -57,6 +65,12 @@ bool TokenArray::push(Token token){
     values.push_back(token);
     return true;
 }
+ size_t TokenArray::size(){
+    return values.size();
+ }
+ Token TokenArray::at(size_t index){
+    return this->values.at(index);
+ }
 
 Lexer::Lexer(std::ifstream *file){
     this->stream.swap(*file);

@@ -1,69 +1,46 @@
-########################################################################
-####################### Makefile Template ##############################
-########################################################################
-
-# Compiler settings - Can be customized.
+# compiler
 CC = g++
-CXXFLAGS = -std=c++17 -Wall
-LDFLAGS = 
 
-# Makefile settings - Can be customized.
-APPNAME = thor
-EXT = .cpp
-SRCDIR = asgard_cpp
-OBJDIR = obj
+# C++ flags
+CFLAGS = -std=c++17 -Wall 
 
-############## Do not change anything from here downwards! #############
-SRC = $(wildcard $(SRCDIR)/*$(EXT))
-OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%.o)
-DEP = $(OBJ:$(OBJDIR)/%.o=%.d)
-# UNIX-based OS variables & settings
-RM = rm
-DELOBJ = $(OBJ)
-# Windows OS variables & settings
-DEL = del
-EXE = .exe
-WDELOBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)\\%.o)
+# directories
+SRCDIR = src
+OBJDIR = .obj
+DEPDIR = .dep
 
-########################################################################
-####################### Targets beginning here #########################
-########################################################################
+# source files
+SRC = $(wildcard $(SRCDIR)/*.cpp)
+OBJ = $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
+DEP = $(OBJS:$(OBJDIR)/%.o=$(DEPDIR)/%.d)
 
-all: $(APPNAME)
+TARGET = thor.out
 
-# Builds the app
-$(APPNAME): $(OBJ)
-	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+thor: clean
 
-# Creates the dependecy rules
-%.d: $(SRCDIR)/%$(EXT)
-	@$(CPP) $(CFLAGS) $< -MM -MT $(@:%.d=$(OBJDIR)/%.o) >$@
-
-# Includes all .h files
--include $(DEP)
-
-# Building rule for .o files and its .c/.cpp in combination with all .h
-$(OBJDIR)/%.o: $(SRCDIR)/%$(EXT)
-	$(CC) $(CXXFLAGS) -o $@ -c $<
-
-################### Cleaning rules for Unix-based OS ###################
-# Cleans complete project
+# clean target
 .PHONY: clean
 clean:
-	$(RM) $(DELOBJ) $(DEP) $(APPNAME)
+    rm -f $(wildcard ./$(OBJ)/* ./$(DEP)/*);
 
-# Cleans only all files with the extension .d
-.PHONY: cleandep
-cleandep:
-	$(RM) $(DEP)
+# build target
+.PHONY: build
+build: $(TARGET)
 
-#################### Cleaning rules for Windows OS #####################
-# Cleans complete project
-.PHONY: cleanw
-cleanw:
-	$(DEL) $(WDELOBJ) $(DEP) $(APPNAME)$(EXE)
+# run target
+#.PHONY: run
+#run: $(TARGET)
+#    ./$(TARGET)
 
-# Cleans only all files with the extension .d
-.PHONY: cleandepw
-cleandepw:
-	$(DEL) $(DEP)
+# rule to build object files
+$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
+    @mkdir -p $(OBJDIR)
+    $(CC) $(CFLAGS) -c $< -o $@ -MD -MP -MF $(DEPDIR)/$*.d
+
+# rule to build the target
+$(TARGET): $(OBJ)
+    @mkdir -p $(dir $@)
+    $(CC) $(CFLAGS) $^ -o $@
+
+# Include the dependency files
+-include $(DEP)

@@ -57,3 +57,4 @@ dkms.conf
 test/
 obj/
 .vscode/
+thor

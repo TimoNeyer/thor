@@ -57,8 +57,11 @@ class TokenArray {
         std::vector <Token> values;
         TokenArray(int minsize);
         TokenArray();
+        TokenArray(TokenArray&& other);
+        TokenArray(TokenArray & other);
         bool push(Token token);
- //       ~TokenArray();
+        size_t size();
+        Token at(size_t index);
 };
 
 class Lexer{
