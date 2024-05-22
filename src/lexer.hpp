@@ -13,7 +13,7 @@ enum TokenType {
   // One or two character tokens.
   BANG, BANG_EQ, EQUAL, EQUAL_EQ, DOUBLE_COLON,
   GREATER, GREATER_EQ, LESS, DOUBLE_DOT,
-  LESS_EQ, DOUBLE_SLASH, LINECOMMENT, 
+  LESS_EQ, DOUBLE_SLASH, //LINECOMMENT, 
   BLOCKCOMMENT, ARROW, PLUS_EQ, ASSIGN,
   MINUS_EQ, STAR_EQ, SLASH_EQ, DOUBLE_MINUS,
   DOUBLE_STAR, DOUBLE_PLUS, DOUBLE_AND,
@@ -23,9 +23,17 @@ enum TokenType {
   RSTRING, NUMBER, FLOAT,
 
   // Keywords.
-  AND, CLASS, ELSE, FALSE, 
-  FUN, FOR, IF, NONE, OR,
-  RETURN, TRUE, VAR, WHILE,
+  BEGIN, BREAK, CASE, CLASS, CONTINUE, DEFAULT, 
+  DO, ELSE, ENUM, FALSE, FN, FOR, IF, IMPORT, INULL, 
+  MODULE, RETURN, STR, STRUCT, SWITCH, THROW, 
+  TRUE, VAR, WHILE, YIELD,
+
+  // native types
+  REFERENCE, INT, BOOL, ARRAY, BYTES, 
+  TUPLE, OBJECT, // class, function, enum, float
+
+  // modifiers
+  LONG, SHORT, SIGNED, UNSIGNED, VOID, GC, NOGC,
 
   EMPTY
 };
@@ -49,8 +57,11 @@ class TokenArray {
         std::vector <Token> values;
         TokenArray(int minsize);
         TokenArray();
+        TokenArray(TokenArray&& other);
+        TokenArray(TokenArray & other);
         bool push(Token token);
- //       ~TokenArray();
+        size_t size();
+        Token at(size_t index);
 };
 
 class Lexer{
@@ -65,6 +76,7 @@ class Lexer{
         bool isComment(std::string current);   
         char getClose(char start);
         void parseString(char start);
+        TokenType isKeyword(std::string value);
     public:
         TokenArray container;
         Lexer(std::ifstream *file);

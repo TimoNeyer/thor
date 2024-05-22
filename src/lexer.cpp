@@ -50,12 +50,32 @@ TokenArray::TokenArray(){
     this->values.resize(CONTAINERBUFF);
 }
 
+TokenArray::TokenArray(TokenArray && other){
+    values.swap(other.values);
+}
+
+TokenArray::TokenArray(TokenArray & other){
+    values.swap(other.values);
+}
+
 bool TokenArray::push(Token token){
     if (values.capacity() == values.size()){
         values.resize(values.size() * 2);
     }
     values.push_back(token);
     return true;
+}
+ size_t TokenArray::size(){
+    return values.size();
+ }
+ Token TokenArray::at(size_t index){
+    return this->values.at(index);
+ }
+
+Lexer::Lexer(std::ifstream *file){
+    this->stream.swap(*file);
+    this->line = 0;
+    this->column = 0;
 }
 
 void Lexer::parseNum(char value){
@@ -109,8 +129,8 @@ void Lexer::parseNum(char value){
 }
 
 bool Lexer::stdcheck(char next){
-    return next >= 'a' && next <= 'z' || 
-           next >= 'A' && next <= 'Z' ||
+    return (next >= 'a' && next <= 'z') || 
+           (next >= 'A' && next <= 'Z') ||
            next == '_'; 
 }
 
@@ -121,7 +141,7 @@ void Lexer::parseIdent(char value){
         column++;
         name.push_back(stream.get());
     }
-    container.push(Token(name, IDENTIFIER, line, column));
+    container.push(Token(name, isKeyword(name), line, column));
 }
 
 char Lexer::get_next(){
@@ -165,6 +185,36 @@ char Lexer::getClose(char start){
     }
 }
 
+TokenType Lexer::isKeyword(std::string value){
+    TokenType previous = container.values.at(container.values.size() - 1).type;
+    if (previous == HASHTAG && value == "begin") return BEGIN;
+    else if (value == "break") return BREAK;
+    else if (value == "case") return CASE;
+    else if (value == "class") return CLASS;
+    else if (value == "continue") return CONTINUE;
+    else if (value == "default") return DEFAULT;
+    else if (value == "do") return DO;
+    else if (value == "else") return ELSE;
+    else if (value == "enum") return ENUM;
+    else if (value == "false") return FALSE;
+    else if (value == "fn") return FN;
+    else if (value == "for") return FOR;
+    else if (value == "if") return IF;
+    else if (value == "import") return IMPORT;
+    else if (previous == HASHTAG && value == "module") return MODULE;
+    else if (value == "null") return INULL;
+    else if (value == "return") return RETURN;
+    else if (value == "str") return STR;
+    else if (value == "struct") return STRUCT;
+    else if (value == "switch") return SWITCH;
+    else if (value == "throw") return THROW;
+    else if (value == "true") return TRUE;
+    else if (value == "var") return VAR;
+    else if (value == "while") return WHILE;
+    else if (value == "yield") return YIELD;
+    return IDENTIFIER;
+}
+
 void Lexer::parseString(char start){
     std::string value;
     while (stream.peek() != EOF) {
@@ -185,18 +235,10 @@ void Lexer::parseString(char start){
         value.push_back(stream.get());
     }
 }
-
-Lexer::Lexer(std::ifstream *file){
-    this->stream.swap(*file);
-    this->line = 0;
-    this->column = 0;
-}
-
 void Lexer::parse(){
     while (stream.peek() != EOF){
         char value = stream.get();
         char next = get_next();
-        std::cout << value << next << '\n';
         switch (value) {
             //case '\r':
             //case '\v':
@@ -268,11 +310,12 @@ void Lexer::parse(){
             default:
                 if (value >= '0' && value <= '9') parseNum(value);
                 if (value == '`' || value == '"' || value == '\'') parseString(value);
-                if (value >= 'a' && value <= 'z' || 
-                    value >= 'A' && value <= 'Z' ||
+                if ((value >= 'a' && value <= 'z') || 
+                    (value >= 'A' && value <= 'Z') ||
                     value == '_' ) parseIdent(value);
         }
     }
+    container.values.shrink_to_fit();
 }
 /*
 Parser::~Parser(){

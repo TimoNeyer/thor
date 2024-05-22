@@ -13,3 +13,8 @@ features:
     - transpiler pipes to gcc with optimization
     - 'new' keyword for initialization
 
+ast storing:
+    root
+    ->
+    blocks with high level tokenarray 
+
