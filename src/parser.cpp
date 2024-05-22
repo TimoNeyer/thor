@@ -32,7 +32,7 @@ TokenArray Parser::getPreprocess(TokenArray * lexerout){
 
 Block Parser::blocking(TokenArray values, Block root) {
     TokenArray bufferarray(16);
-    for (int i = 0; i< values.size(); i++){
+    for (unsigned long int i = 0; i< values.size(); i++){
         Token current = values.values.at(i);
         switch (current.type) {
         case CLASS:

@@ -1,46 +1,58 @@
-# compiler
+########################################################################
+####################### Makefile Template ##############################
+########################################################################
+
+# Compiler settings - Can be customized.
 CC = g++
+CXXFLAGS = -std=c++17 -Wall -Wextra
+LDFLAGS = 
 
-# C++ flags
-CFLAGS = -std=c++17 -Wall 
-
-# directories
+# Makefile settings - Can be customized.
+APPNAME = thor.out
+EXT = .cpp
 SRCDIR = src
-OBJDIR = .obj
-DEPDIR = .dep
+OBJDIR = obj
 
-# source files
-SRC = $(wildcard $(SRCDIR)/*.cpp)
-OBJ = $(SRCS:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
-DEP = $(OBJS:$(OBJDIR)/%.o=$(DEPDIR)/%.d)
+############## Do not change anything from here downwards! #############
+SRC = $(wildcard $(SRCDIR)/*$(EXT))
+OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%.o)
+DEP = $(OBJ:$(OBJDIR)/%.o=$(DEPDIR)/%.d)
+# UNIX-based OS variables & settings
+RM = rm
+DELOBJ = $(OBJ)
+# Windows OS variables & settings
+DEL = del
+EXE = .exe
+WDELOBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)\\%.o)
 
-TARGET = thor.out
+########################################################################
+####################### Targets beginning here #########################
+########################################################################
 
-thor: clean
+all: $(APPNAME)
 
-# clean target
+# Builds the app
+$(APPNAME): $(OBJ)
+	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+
+# Creates the dependecy rules
+%.d: $(SRCDIR)/%$(EXT)
+	@$(CPP) $(CFLAGS) $< -MM -MT $(@:%.d=$(OBJDIR)/%.o) >$@
+
+# Includes all .h files
+-include $(DEP)
+
+# Building rule for .o files and its .c/.cpp in combination with all .h
+$(OBJDIR)/%.o: $(SRCDIR)/%$(EXT)
+	$(CC) $(CXXFLAGS) -o $@ -c $<
+
+################### Cleaning rules for Unix-based OS ###################
+# Cleans complete project
 .PHONY: clean
 clean:
-    rm -f $(wildcard ./$(OBJ)/* ./$(DEP)/*);
+	$(RM) $(DELOBJ) $(DEP) $(APPNAME)
 
-# build target
-.PHONY: build
-build: $(TARGET)
-
-# run target
-#.PHONY: run
-#run: $(TARGET)
-#    ./$(TARGET)
-
-# rule to build object files
-$(OBJDIR)/%.o: $(SRCDIR)/%.cpp
-    @mkdir -p $(OBJDIR)
-    $(CC) $(CFLAGS) -c $< -o $@ -MD -MP -MF $(DEPDIR)/$*.d
-
-# rule to build the target
-$(TARGET): $(OBJ)
-    @mkdir -p $(dir $@)
-    $(CC) $(CFLAGS) $^ -o $@
-
-# Include the dependency files
--include $(DEP)
+# Cleans only all files with the extension .d
+.PHONY: cleandep
+cleandep:
+	$(RM) $(DEP)
