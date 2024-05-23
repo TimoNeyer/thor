@@ -1,80 +1,174 @@
 #include "parser.hpp"
 
-Block::Block(TokenType value){
-    type = value;
+Node::Node()
+{
+    this->value = Token();
+    this->subtree = std::vector<Node *>();
+    this->parent = nullptr;
 }
 
-void Block::push(Token value){
-    parameters.push_back(value);
+Node::Node(Token token, Node * parent)
+{
+    this->subtree = std::vector<Node *>();
+    this->value = token;
+    this->parent = parent;
 }
 
-void Block::set(TokenArray value){
-    body.values.swap(value.values);
+Node::Node(Node &other, Node * parent)
+{
+    this->subtree = other.subtree;
+    this->value = other.value;
 }
 
-Parser::Parser(){
+void Node::push_node(Node * node)
+{
+    this->subtree.push_back(node);
 }
 
-TokenArray Parser::getPreprocess(TokenArray * lexerout){
+Node::~Node()
+{
+    for (Node * ptr : this->subtree)
+    {
+        if (!ptr->subtree.empty()) delete &ptr ;
+    }
+}
+
+Parser::Parser()
+{
+    this->SymbolTable = std::unordered_map <std::string, TokenType>();
+    //this->current = std::queue <Node>();
+    this->current = new Node();
+    this->head = Node();
+    this->preProc = TokenArray();
+    this->backtrack = std::queue<Node *>();
+}
+
+void Parser::parseExpression(TokenArray * value, const size_t index)
+{
+    Node * exp = new Node(value->at(index), nullptr);
+    switch (value->at(index).type)
+    {
+    case IDENTIFIER:
+
+        break;
+    
+    default:
+        break;
+    }
+}
+
+void Parser::getPreprocess(TokenArray * lexerout)
+{
     TokenArray PreProc(8);
-    if (lexerout->values.front().type == HASHTAG){
-        for (int i = 0; lexerout->values.at(++i).type != HASHTAG && 
-            lexerout->values.at(i+1).type != BEGIN;){
+    if (lexerout->values.front().type == HASHTAG)
+    {
+        int i = 1;
+        for (i; 
+            lexerout->values.at(i).type != HASHTAG
+            && lexerout->values.at(i+1).type != BEGIN
+            && i < MAXPREPROC;
+            i++)
+            {
                 PreProc.push(lexerout->values.at(i));
             }
-    } else if (PreProc.values.size() == 0) {
-        std::cout << "missing directives, add module name and start program with #begin;";
-        throw;
+        lexerout->values = std::vector<Token>(lexerout->values.begin() + i, lexerout->values.end());
+    } 
+    if (PreProc.values.size() == 0) 
+    {
+        throw std::runtime_error("missing directives, add module name and start program with #begin;");
     }
     PreProc.values.shrink_to_fit();
-    return PreProc; 
+    this->preProc = PreProc;
 }
 
-Block Parser::blocking(TokenArray values, Block root) {
-    TokenArray bufferarray(16);
-    for (unsigned long int i = 0; i< values.size(); i++){
-        Token current = values.values.at(i);
-        switch (current.type) {
+/*
+Node Parser::parseClass(TokenArray * value, size_t index)
+{
+    if (value->at(index+1).type != LEFT_BRACE)
+    Node * c = new Node(value, this->current);
+    this->current = c;
+    this->backtrack.push(c);
+}
+*/
+
+void Parser::parseFn(TokenArray * value, size_t * index)
+{
+    if (value->at(++*index).type != LESS || 
+        value->at(++*index).type < IDENTIFIER)
+    
+        {
+            throw std::runtime_error("function signature has no type");
+        }
+    Node * fn = new Node(value->at(++*index), this->current);
+    this->backtrack.push(fn);
+    Node * type = new Node(value->at(++*index), fn);
+    Node * name = new Node(value->at((++*index)), fn);
+    this->SymbolTable.emplace(value->at(*index).value, 
+                        value->at(*index).type);
+    *index += 2; 
+    Node * params = new Node(value->at(*index), fn);
+// Place to implement const 
+    for (int i = 0;
+        i < MAXARGS
+        && value->at(++*index).type != RIGHT_PAREN;
+        i++)
+        {
+            Node * arg = new Node(value->at(*index), params);
+            params->push_node(arg);
+        }
+    this->current = fn;
+}
+
+void Parser::parseIf(TokenArray * value, size_t * index)
+{
+//    if ()
+}
+
+void Parser::parse(TokenArray * lexerout) 
+{
+    this->getPreprocess(lexerout);
+    for (size_t i = 0; i < lexerout->size(); i++){
+        switch (lexerout->at(i).type) {
         case CLASS:
-            main.push(parseClass(&values));
+            
             break;
         case DO:
-            main.push(parseDo(&values));
+            
             break;
         case ENUM:
-            main.push(parseEnum(&values));
+            
             break;
         case IF:
-            main.push(parseIf(&values));
+            
             break;
         case IMPORT:
-            main.push(parseImport(&values));
+            
             break;
         case FN:
-            main.push(parseFn(&values));
+            this->parseFn(lexerout, &i);    
             break;
         case FOR:
-            main.push(parseFor(&values));
+            
             break;
         case STRUCT:
-            main.push(parseStruct(&values));
+            
             break;
         case SWITCH:
-            main.push(parseSwitch(&values));
+            
             break;
         case THROW:
-            main.push(parseThrow(&values));
+            
             break;
         case WHILE:
-            main.push(parseWhile(&values));
+            
+            break;
+        case RIGHT_BRACE:
+            this->current = this->backtrack.back();
+            this->backtrack.pop();
             break;
         default:
-            std::cout << "found unknown token " << current.value << std::endl;
+            //std::cout << "found unknown token " << current.value << std::endl;
             break;
         }
     }
-}
-
-
-void Parser::parse(TokenArray lexerout){
 }
