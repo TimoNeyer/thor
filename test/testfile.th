@@ -1,0 +1,25 @@
+#module:=tester;
+import<stdlib->>;
+import<str.fstr->str>;
+import<:localfile->lib>;
+#begin;
+
+fn<void>ehlo(<int>param){
+    switch(param){
+        case(1) {
+            return();
+        }
+        default {
+            return();
+        }
+    }
+}
+
+fn<int>main(){
+    var<str>string=     
+    
+     'ehlo world';
+    <float>var=1.1;
+    print(string);
+    return(1);
+}
