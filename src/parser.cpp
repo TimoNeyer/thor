@@ -1,18 +1,34 @@
 #include "parser.hpp"
 
-Block::Block(TokenType value){
-    type = value;
+Node::Node(Token &token)
+{
+    this->subtree = std::vector<Node *>();
+    this->value = token;
 }
 
-void Block::push(Token value){
-    parameters.push_back(value);
+Node::Node(Node &other)
+{
+    this->subtree = other.subtree;
+    this->value = other.value;
 }
 
-void Block::set(TokenArray value){
-    body.values.swap(value.values);
+void Node::push_node(Node &node)
+{
+    Node * stored_node = new Node(node);
+    this->subtree.push_back(stored_node);
+}
+
+Node::~Node()
+{
+    for (Node * ptr : this->subtree)
+    {
+        delete ptr;
+    }
 }
 
 Parser::Parser(){
+    SymbolTable = std::unordered_map <std::string, Variable>();
+    
 }
 
 TokenArray Parser::getPreprocess(TokenArray * lexerout){
@@ -30,51 +46,54 @@ TokenArray Parser::getPreprocess(TokenArray * lexerout){
     return PreProc; 
 }
 
-Block Parser::blocking(TokenArray values, Block root) {
+
+
+void Parser::parse(TokenArray lexerout) {
     TokenArray bufferarray(16);
+<<<<<<< Updated upstream
     for (unsigned long int i = 0; i< values.size(); i++){
         Token current = values.values.at(i);
+=======
+    for (int i = 0; i < lexerout.size(); i++){
+        Token current = lexerout.at(i);
+>>>>>>> Stashed changes
         switch (current.type) {
         case CLASS:
-            main.push(parseClass(&values));
+            
             break;
         case DO:
-            main.push(parseDo(&values));
+            
             break;
         case ENUM:
-            main.push(parseEnum(&values));
+            
             break;
         case IF:
-            main.push(parseIf(&values));
+            
             break;
         case IMPORT:
-            main.push(parseImport(&values));
+            
             break;
         case FN:
-            main.push(parseFn(&values));
+            
             break;
         case FOR:
-            main.push(parseFor(&values));
+            
             break;
         case STRUCT:
-            main.push(parseStruct(&values));
+            
             break;
         case SWITCH:
-            main.push(parseSwitch(&values));
+            
             break;
         case THROW:
-            main.push(parseThrow(&values));
+            
             break;
         case WHILE:
-            main.push(parseWhile(&values));
+            
             break;
         default:
             std::cout << "found unknown token " << current.value << std::endl;
             break;
         }
     }
-}
-
-
-void Parser::parse(TokenArray lexerout){
 }

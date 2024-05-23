@@ -11,15 +11,16 @@ enum BlockType {
     LEAF, PARAMETERS, STATEMENT, PREPROCESS
 };
 
-class Block {
-    public:
-    TokenType type;
-    std::vector <Token> parameters;
-    TokenArray body;
-    Block(TokenType value);
-    void push(Token value);
-    void set(TokenArray value);
+struct Node
+{
+    Token value;
+    std::vector <Node *> subtree;
+    Node(Token &token);
+    Node(Node &other);
+    void push_node(Node &node);
+    ~Node();
 };
+
 
 /*
 possible contents of variable:
@@ -36,15 +37,18 @@ possible contents of variable:
 - objectptr -> function or class
 */
 
-struct Variable {
+struct Variable 
+{
     void * value;
     TokenType type;
 };
 
-class Parser{
-        char delim;
+class Parser
+{
         std::unordered_map <std::string, Variable> SymbolTable;
+        Node head;
         TokenArray getPreprocess(TokenArray * lexerout);
+<<<<<<< Updated upstream
         Block parseClass(TokenArray * values);
         Block parseDo(TokenArray * values);
         Block parseEnum(TokenArray * values);
@@ -57,9 +61,21 @@ class Parser{
         Block parseThrow(TokenArray * values);
         Block parseWhile(TokenArray * values);
 
+=======
+        Node parseClass(TokenArray * values);
+        Node parseDo(TokenArray * values);
+        Node parseEnum(TokenArray * values);
+        Node parseIf(TokenArray * values);
+        Node parseImport(TokenArray * values);
+        Node parseFn(TokenArray * values);
+        Node parseFor(TokenArray * values);
+        Node parseStruct(TokenArray * values);
+        Node parseSwitch(TokenArray * values);
+        Node parseThrow(TokenArray * values);
+        Node parseWhile(TokenArray * values);
+>>>>>>> Stashed changes
     public:
-        std::queue <Block> main;
-        Block blocking(TokenArray values, Block root);
+        std::queue <Node> current;
         void parse(TokenArray lexerout);
         Parser();
 };
