@@ -56,6 +56,7 @@ class Parser{
         Block parseSwitch(TokenArray * values);
         Block parseThrow(TokenArray * values);
         Block parseWhile(TokenArray * values);
+
     public:
         std::queue <Block> main;
         Block blocking(TokenArray values, Block root);

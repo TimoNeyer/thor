@@ -1,58 +1,65 @@
-########################################################################
-####################### Makefile Template ##############################
-########################################################################
-
-# Compiler settings - Can be customized.
+# tool macros
 CC = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra
-LDFLAGS = 
+CXXFLAGS = =std=c++17 # -Wall -Wextra
+DBGFLAGS = -g
+COBJFLAGS = $(CFLAGS) -c
 
-# Makefile settings - Can be customized.
-APPNAME = thor.out
-EXT = .cpp
-SRCDIR = src
-OBJDIR = obj
+# path macros
+BIN_PATH := bin
+OBJ_PATH := obj
+SRC_PATH := src
+DBG_PATH := debug
 
-############## Do not change anything from here downwards! #############
-SRC = $(wildcard $(SRCDIR)/*$(EXT))
-OBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)/%.o)
-DEP = $(OBJ:$(OBJDIR)/%.o=$(DEPDIR)/%.d)
-# UNIX-based OS variables & settings
-RM = rm
-DELOBJ = $(OBJ)
-# Windows OS variables & settings
-DEL = del
-EXE = .exe
-WDELOBJ = $(SRC:$(SRCDIR)/%$(EXT)=$(OBJDIR)\\%.o)
+# compile macros
+TARGET_NAME := thor
+TARGET := $(BIN_PATH)/$(TARGET_NAME)
+TARGET_DEBUG := $(DBG_PATH)/$(TARGET_NAME)
 
-########################################################################
-####################### Targets beginning here #########################
-########################################################################
+# src files & obj files
+SRC := $(foreach x, $(SRC_PATH), $(wildcard $(addprefix $(x)/*,.cpp)))
+OBJ := $(addprefix $(OBJ_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
+OBJ_DEBUG := $(addprefix $(DBG_PATH)/, $(addsuffix .o, $(notdir $(basename $(SRC)))))
 
-all: $(APPNAME)
+# clean files list
+DISTCLEAN_LIST := $(OBJ) \
+                  $(OBJ_DEBUG)
+CLEAN_LIST := $(TARGET) \
+			  $(TARGET_DEBUG) \
+			  $(DISTCLEAN_LIST)
 
-# Builds the app
-$(APPNAME): $(OBJ)
-	$(CC) $(CXXFLAGS) -o $@ $^ $(LDFLAGS)
+# default rule
+default: makedir all
 
-# Creates the dependecy rules
-%.d: $(SRCDIR)/%$(EXT)
-	@$(CPP) $(CFLAGS) $< -MM -MT $(@:%.d=$(OBJDIR)/%.o) >$@
+# non-phony targets
+$(TARGET): $(OBJ)
+	$(CC) -o $@ $(OBJ) $(CFLAGS)
 
-# Includes all .h files
--include $(DEP)
+$(OBJ_PATH)/%.o: $(SRC_PATH)/%.cpp
+	$(CC) $(COBJFLAGS) -o $@ $<
 
-# Building rule for .o files and its .c/.cpp in combination with all .h
-$(OBJDIR)/%.o: $(SRCDIR)/%$(EXT)
-	$(CC) $(CXXFLAGS) -o $@ -c $<
+$(DBG_PATH)/%.o: $(SRC_PATH)/%.cpp
+	$(CC) $(COBJFLAGS) $(DBGFLAGS) -o $@ $<
 
-################### Cleaning rules for Unix-based OS ###################
-# Cleans complete project
+$(TARGET_DEBUG): $(OBJ_DEBUG)
+	$(CC) $(CFLAGS) $(DBGFLAGS) $(OBJ_DEBUG) -o $@
+
+# phony rules
+.PHONY: makedir
+makedir:
+	@mkdir -p $(BIN_PATH) $(OBJ_PATH) $(DBG_PATH)
+
+.PHONY: all
+all: $(TARGET)
+
+.PHONY: debug
+debug: $(TARGET_DEBUG)
+
 .PHONY: clean
 clean:
-	$(RM) $(DELOBJ) $(DEP) $(APPNAME)
+	@echo CLEAN $(CLEAN_LIST)
+	@rm -f $(CLEAN_LIST)
 
-# Cleans only all files with the extension .d
-.PHONY: cleandep
-cleandep:
-	$(RM) $(DEP)
+.PHONY: distclean
+distclean:
+	@echo CLEAN $(DISTCLEAN_LIST)
+	@rm -f $(DISTCLEAN_LIST)
