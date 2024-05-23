@@ -19,19 +19,19 @@ enum TokenType {
   MINUS_EQ, STAR_EQ, SLASH_EQ, DOUBLE_MINUS,
   DOUBLE_STAR, DOUBLE_PLUS, DOUBLE_AND,
 
-  // Literals.
-  IDENTIFIER, FSTRING, NSTRING, 
-  RSTRING, NUMBER, FLOAT,
-
   // Keywords.
   BEGIN, BREAK, CASE, CLASS, CONTINUE, DEFAULT, 
   DO, ELSE, ENUM, FALSE, FN, FOR, IF, IMPORT, INULL, 
   MODULE, RETURN, STR, STRUCT, SWITCH, THROW, 
   TRUE, VAR, WHILE, YIELD,
 
+  // Literals.
+  IDENTIFIER, FSTRING, NSTRING, 
+  RSTRING, NUMBER, FLOAT,
+
   // native types
   REFERENCE, INT, BOOL, ARRAY, BYTES, 
-  TUPLE, OBJECT, // class, function, enum, float
+  TUPLE, OBJECT, EXPRESSION, // class, function, enum, float
 
   // modifiers
   LONG, SHORT, SIGNED, UNSIGNED, VOID, GC, NOGC,
@@ -60,6 +60,7 @@ class TokenArray {
         TokenArray();
         TokenArray(TokenArray&& other);
         TokenArray(TokenArray & other);
+        TokenArray & operator=(const TokenArray &other);
         bool push(Token token);
         size_t size();
         Token at(size_t index);

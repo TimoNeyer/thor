@@ -58,6 +58,12 @@ TokenArray::TokenArray(TokenArray & other){
     values.swap(other.values);
 }
 
+TokenArray & TokenArray::operator=(const TokenArray &other)
+{
+    this->values = other.values;
+    return *this;
+}
+
 bool TokenArray::push(Token token){
     if (values.capacity() == values.size()){
         values.resize(values.size() * 2);
@@ -69,6 +75,7 @@ bool TokenArray::push(Token token){
     return values.size();
  }
  Token TokenArray::at(size_t index){
+    if (index > this->size()) throw std::runtime_error("Error");
     return this->values.at(index);
  }
 
