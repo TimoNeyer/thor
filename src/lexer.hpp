@@ -6,68 +6,118 @@
 #define CONTAINERBUFF 128
 
 enum TokenType {
-  // Single-character tokens.
+  Separators,
+
   LEFT_PAREN,
   RIGHT_PAREN,
   LEFT_BRACE,
   RIGHT_BRACE,
-  COMMA,
-  DOT,
-  MINUS,
-  PLUS,
-  COLON,
+  LEFT_BRACKET,
+  RIGHT_BRACKET,
   SEMICOLON,
-  SLASH,
-  STAR,
-  AT,
-  PIPE,
+  BLOCKCOMMENT,
+  COMMA,
   HASHTAG,
+
+  ENDSEPARATORS,
+
+  MODIFIERS,
+
   AND,
 
-  // One or two character tokens.
+  MATH,
+
+  STAR,
+
+  ENDMODIFIERS,
+
+  MINUS,
+  PLUS,
+  SLASH,
+  DOUBLE_SLASH,
+  DOUBLE_STAR,
+
+  ENDMATH,
+
+  LOGIC,
+
   BANG,
-  BANG_EQ,
-  EQUAL,
-  EQUAL_EQ,
-  DOUBLE_COLON,
+  DOUBLE_AND,
+  DOUBLE_PIPE,
+
+  ENDLOGIC,
+
+  COMPARE,
+
   GREATER,
   GREATER_EQ,
   LESS,
-  DOUBLE_DOT,
   LESS_EQ,
-  BLOCKCOMMENT,
-  ARROW,
-  PLUS_EQ,
-  ASSIGN,
-  MINUS_EQ,
-  STAR_EQ,
-  SLASH_EQ,
-  DOUBLE_MINUS,
-  DOUBLE_STAR,
-  DOUBLE_PLUS,
-  DOUBLE_SLASH, 
-  DOUBLE_PIPE,
-  DOUBLE_AND,
+  BANG_EQ,
+  EQUAL_EQ,
 
-  // Keywords.
+  ENDCOMPARE,
+
+  ASSIGNMENT,
+
+  EQUAL,
+  MINUS_EQ,
+  PLUS_EQ,
+  DOUBLE_PLUS,
+  DOUBLE_MINUS,
+  ASSIGN,
+
+  ENDASSIGNMENT,
+
+  ACCESS,
+
+  ARROW,
+  DOT,
+  DOUBLE_COLON,
+
+  ENDACCESS,
+
+  MISC,
+
+  COLON,
+  PIPE,
+
+  ENDMISC,
+
+  TYPES,
+
+  REFERENCE,
+  INT,
+  BOOL,
+  ARRAY,
+  BYTES,
+  TUPLE,
+  OBJECT,
+  EXPRESSION,
+  DOUBLE,
+
+  KEYWORDS,
+
+  CLASS,
+  FN,
+  ENUM,
+
+  ENDTYPES,
+
   BEGIN,
   BREAK,
   CASE,
-  CLASS,
   CONTINUE,
   DEFAULT,
   DO,
   ELSE,
-  ENUM,
   FALSE,
-  FN,
   FOR,
   IF,
   IMPORT,
   INULL,
   MODULE,
   RETURN,
-  STR,
   STRUCT,
   SWITCH,
   THROW,
@@ -76,7 +126,10 @@ enum TokenType {
   WHILE,
   YIELD,
 
-  // modifiers
+  ENDKEYWORDS,
+
+  TYPETYPE,
+
   LONG,
   SHORT,
   SIGNED,
@@ -85,7 +138,10 @@ enum TokenType {
   GC,
   NOGC,
 
-  // Literals.
+  ENDTYPETYPE,
+
+  LITERALS,
+
   IDENTIFIER,
   FSTRING,
   NSTRING,
@@ -93,16 +149,7 @@ enum TokenType {
   NUMBER,
   FLOAT,
 
-  // native types
-  REFERENCE,
-  INT,
-  BOOL,
-  ARRAY,
-  BYTES,
-  TUPLE,
-  OBJECT,
-  EXPRESSION, 
-  // class, function, enum, float
+  ENDLITERALS,
 
   EMPTY
 };

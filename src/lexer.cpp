@@ -280,6 +280,12 @@ void Lexer::parse() {
     case '}':
       container.push(Token("}", RIGHT_BRACE, line, column));
       break;
+    case '[':
+      container.push(Token("[", LEFT_BRACKET, line, column));
+      break;
+    case ']':
+      container.push(Token("]", RIGHT_BRACKET, line, column));
+      break;
     case '<':
       next == '=' ? container.push(Token("<=", GREATER_EQ, line, column)) ||
                         stream.get()
