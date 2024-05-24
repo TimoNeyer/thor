@@ -20,6 +20,6 @@ fn<int>main(){
     
      'ehlo world';
     <float>var=1.1;
-    print(string);
+    print(string[2]);
     return(1);
 }

@@ -13,15 +13,16 @@ enum TokenType {
   LEFT_BRACE,
   RIGHT_BRACE,
   LEFT_BRACKET,
-  RIGHT_BRACKET,
   SEMICOLON,
   BLOCKCOMMENT,
   COMMA,
   HASHTAG,
 
-  ENDSEPARATORS,
-
   MODIFIERS,
+
+  RIGHT_BRACKET,
+
+  ENDSEPARATORS,
 
   AND,
 
@@ -63,6 +64,7 @@ enum TokenType {
   EQUAL,
   MINUS_EQ,
   PLUS_EQ,
+  STAR_EQ,
   DOUBLE_PLUS,
   DOUBLE_MINUS,
   ASSIGN,
@@ -81,6 +83,7 @@ enum TokenType {
 
   COLON,
   PIPE,
+  DOUBLE_DOT,
 
   ENDMISC,
 

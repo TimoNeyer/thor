@@ -1,6 +1,6 @@
 # tool macros
-CC = g++
-CXXFLAGS = =std=c++20 # -Wall -Wextra
+CC = clang++
+CXXFLAGS = =std=c++20  -Wall -Wextra
 DBGFLAGS = -g
 COBJFLAGS = $(CFLAGS) -c
 

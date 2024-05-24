@@ -219,7 +219,7 @@ TokenType Lexer::isKeyword(std::string value) {
   else if (value == "return")
     return RETURN;
   else if (value == "str")
-    return STR;
+    return STRUCT;
   else if (value == "struct")
     return STRUCT;
   else if (value == "switch")
@@ -264,8 +264,11 @@ void Lexer::parse() {
     switch (value) {
     // case '\r':
     // case '\v':
-    case '\t':
     case '\n':
+      this->column = 0;
+      this->line++;
+      break;
+    case '\t':
     case ' ':
       break;
     case '(':
@@ -285,6 +288,9 @@ void Lexer::parse() {
       break;
     case ']':
       container.push(Token("]", RIGHT_BRACKET, line, column));
+      break;
+    case ';':
+      container.push(Token(";", SEMICOLON, line, column));
       break;
     case '<':
       next == '=' ? container.push(Token("<=", GREATER_EQ, line, column)) ||
@@ -314,9 +320,6 @@ void Lexer::parse() {
       : next == '+' ? container.push(Token("++", DOUBLE_PLUS, line, column)) ||
                           stream.get()
                     : container.push(Token("+", PLUS, line, column));
-      break;
-    case ';':
-      container.push(Token(";", SEMICOLON, line, column));
       break;
     case '/':
       next == '*'   ? isComment("/*")

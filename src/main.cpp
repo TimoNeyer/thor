@@ -1,24 +1,31 @@
 #include <fstream>
 #include <iostream>
 
-#include "lexer.hpp"
+#include "./errors.hpp"
+#include "./lexer.hpp"
+#include "./parser.hpp"
 
 int main(int argc, char *argv[]) {
-  if (argc != 2) {
-    perror("too few arguments given");
-  }
-  std::ifstream file(argv[1]);
-  if (file.bad())
-    perror("failed to open file");
-  Lexer parser(&file);
-  parser.parse();
-  // return 1;
-  for (unsigned long int i = 0; i < parser.container.values.size(); i++) {
-    if (parser.container.values.at(i).type == EMPTY)
+  try {
+    if (argc != 2) {
+      throw BaseException(Token(), "Error, no file given", 0);
+    }
+    std::ifstream file(argv[1]);
+    if (file.bad())
+      throw BaseException(Token(), "failed to open file", 0);
+    Lexer lexer(&file);
+    lexer.parse();
+    for (unsigned long int i = 0; i < lexer.container.values.size(); i++) {
+    if (lexer.container.values.at(i).type == EMPTY)
       continue;
-    std::cout << "Token " << parser.container.values.at(i).value;
-    std::cout << " is Type " << parser.container.values.at(i).type;
+    std::cout << "Token " << lexer.container.values.at(i).value;
+    std::cout << " is Type " << lexer.container.values.at(i).type;
     std::cout << "\n";
+  }
+    Parser parser = Parser();
+    parser.parse(&lexer.container);
+  } catch (BaseException e) {
+    std::cout << e.what() << std::endl;
   }
   return 0;
 }
